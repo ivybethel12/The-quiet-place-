@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Quiet Place — Prototype v2</title>
+<style>
+:root{--cream:#f7f3e9;--paper:#fffdf8;--sage:#71815d;--dark:#263124;--gold:#b89b5d;--line:#e6dfd0;--muted:#687064}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--dark);font-family:Inter,Arial,sans-serif}
+header{background:var(--paper);border-bottom:1px solid var(--line);padding:14px 5%;display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:0;z-index:5}
+.brand{display:flex;gap:10px;align-items:center}.mark{font-size:31px;color:var(--gold)}.brand h1{font:700 22px Georgia;margin:0}.brand small{letter-spacing:1.5px;color:var(--muted)}
+nav{display:flex;gap:20px}nav a{color:var(--dark);text-decoration:none;font-size:14px}.btn{border:0;border-radius:25px;padding:12px 20px;background:var(--sage);color:white;font-weight:700;cursor:pointer}.ghost{background:#eee9dc;color:var(--dark)}
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:430px;background:var(--paper)}.copy{padding:65px 9%;display:flex;flex-direction:column;justify-content:center}.copy h2{font:700 clamp(38px,5vw,64px) Georgia;line-height:1.05;margin:10px 0}.copy h2 span{color:var(--sage)}.copy p{max-width:540px;font-size:17px;line-height:1.65;color:#596155}.heroimg{background:url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=1200&q=80') center/cover;display:flex;align-items:flex-start;justify-content:flex-end;padding:45px}.quote{max-width:360px;background:#fffdf8ee;padding:25px;border-radius:18px}.quote p{font:italic 21px Georgia;line-height:1.45;margin:0}.quote b{color:var(--sage)}
+main section{padding:42px 6%}.title{font:700 27px Georgia;margin:0 0 22px}.cats{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}.cat{background:var(--paper);border:1px solid var(--line);padding:18px 8px;border-radius:13px;text-align:center;cursor:pointer}.cat.active{outline:2px solid var(--sage)}.cat div{font-size:24px}.cat b{display:block;margin-top:7px;font-size:13px}
+.layout{display:grid;grid-template-columns:2fr 1fr;gap:22px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:23px}.post{padding:18px 0;border-bottom:1px solid var(--line)}.post:last-child{border:0}.author{font-size:13px;font-weight:700;color:var(--sage)}.post h3{font:700 20px Georgia;margin:8px 0}.post p{line-height:1.55;color:#596155}.actions{display:flex;gap:14px;font-size:13px;color:var(--muted)}.actions button{border:0;background:none;color:inherit;cursor:pointer;padding:0}.side{margin-bottom:18px}.side h3{font:700 20px Georgia;margin-top:0}.side p{font-size:14px;line-height:1.6;color:#596155}
+.modal{display:none;position:fixed;inset:0;background:#16201699;z-index:10;align-items:center;justify-content:center;padding:20px}.card{background:var(--paper);width:min(650px,100%);padding:28px;border-radius:20px}.card h2{font:700 28px Georgia}.card input,.card textarea,.card select{width:100%;padding:13px;border:1px solid #ddd5c4;border-radius:10px;background:white;margin:7px 0 13px;font:15px Arial}.card textarea{height:150px;resize:vertical}.row{display:flex;justify-content:flex-end;gap:10px}.notice{font-size:12px;color:var(--muted)}
+footer{background:#273123;color:#edf0e8;text-align:center;padding:30px 6%;font-size:13px}
+@media(max-width:900px){nav{display:none}.hero{grid-template-columns:1fr}.heroimg{min-height:300px}.cats{grid-template-columns:repeat(4,1fr)}.layout{grid-template-columns:1fr}}
+@media(max-width:520px){.cats{grid-template-columns:repeat(2,1fr)}header{padding:12px 4%}.brand h1{font-size:18px}.brand small{font-size:8px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="mark">☦</div><div><h1>THE QUIET PLACE</h1><small>WHERE HEARTS CAN SPEAK FREELY.</small></div></div>
+  <nav><a href="#">Home</a><a href="#conversations">Conversations</a><a href="#categories">Categories</a><a href="#guidelines">Guidelines</a></nav>
+  <button class="btn" onclick="openComposer()">✎ Share Anonymously</button>
+</header>
+
+<section class="hero">
+  <div class="copy">
+    <div style="color:var(--sage);font-weight:700;letter-spacing:1px">A CHRISTIAN COMMUNITY</div>
+    <h2>You don't have to<br><span>have it all together.</span></h2>
+    <p>A safe, anonymous space for honest conversations about faith, life, relationships, questions, prayer, and everything in between.</p>
+    <button class="btn" style="width:max-content" onclick="openComposer()">Share Anonymously</button>
+    <div class="notice" style="margin-top:10px">🔒 Public posts use a random anonymous identity.</div>
+  </div>
+  <div class="heroimg"><div class="quote"><p>“Come to me, all you who are weary and burdened, and I will give you rest.”</p><b>— Matthew 11:28</b></div></div>
+</section>
+
+<section id="categories">
+<h2 class="title">What would you like to talk about?</h2>
+<div class="cats" id="cats"></div>
+</section>
+
+<section id="conversations">
+<div class="layout">
+<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center"><h2 class="title" style="margin:0">Conversations</h2><select id="sort" onchange="renderPosts()" style="padding:8px;border:1px solid var(--line);border-radius:8px"><option value="latest">Latest</option><option value="popular">Popular</option></select></div><div id="posts"></div></div>
+<aside>
+<div class="panel side"><h3>🙏 Need prayer?</h3><p>You can request prayer anonymously. Keep it simple, honest, and respectful.</p><button class="btn" onclick="openComposer('Prayer')">Request Prayer</button></div>
+<div class="panel side" id="guidelines"><h3>🤍 A gentle reminder</h3><p>Everyone has a story. Be kind, listen carefully, and disagree without attacking people.</p><b>Be kind. Be respectful. Be Christlike.</b></div>
+</aside>
+</div>
+</section>
+<footer>The Quiet Place · Rooted in grace, truth, prayer, and respect.</footer>
+
+<div class="modal" id="modal"><div class="card">
+<h2 id="modalTitle">Share anonymously</h2>
+<label>Topic</label><select id="category"></select>
+<label>Title</label><input id="postTitle" placeholder="Give your conversation a clear title">
+<label>Your thoughts</label><textarea id="postBody" placeholder="Share what is on your heart..."></textarea>
+<div class="notice">You will appear publicly as a randomly generated Quiet Soul / Seeking Heart / Hopeful Soul.</div>
+<div class="row" style="margin-top:15px"><button class="btn ghost" onclick="closeComposer()">Cancel</button><button class="btn" onclick="publish()">Post Anonymously</button></div>
+</div></div>
+
+<script>
+const categories=[["🌿","Faith"],["♡","Relationships"],["🌱","Life & Growth"],["📖","Bible & Scripture"],["🙏","Prayer"],["?","Questions & Doubts"],["☆","Testimonies"],["♡","Encouragement"]];
+const names=["Quiet Soul","Seeking Heart","Hopeful Soul","Faithful Soul","Gentle Spirit","Resting Heart"];
+let selected="All";
+let posts=JSON.parse(localStorage.getItem("tqp_posts")||"null")||[
+{id:1,name:"Quiet Soul #4821",cat:"Faith",title:"I believe in God, but lately I've been struggling to pray. Has anyone else experienced this?",body:"I would really appreciate hearing how others found their way back to prayer.",likes:67,comments:24,time:"2h ago"},
+{id:2,name:"Seeking Heart #7192",cat:"Relationships",title:"How do you forgive someone who hurt you deeply?",body:"I know forgiveness is important, but I am struggling to understand what it looks like in practice.",likes:82,comments:31,time:"4h ago"},
+{id:3,name:"Hopeful Soul #1057",cat:"Life & Growth",title:"How do I know what God is calling me to do?",body:"I have several paths in front of me and want to make a wise decision.",likes:54,comments:18,time:"6h ago"}
+];
+
+function save(){localStorage.setItem("tqp_posts",JSON.stringify(posts))}
+function renderCats(){
+ document.getElementById("cats").innerHTML=`<div class="cat ${selected==="All"?"active":""}" onclick="filterCat('All')"><div>✦</div><b>All</b></div>`+
+ categories.map(c=>`<div class="cat ${selected===c[1]?"active":""}" onclick="filterCat('${c[1]}')"><div>${c[0]}</div><b>${c[1]}</b></div>`).join("");
+}
+function filterCat(c){selected=c;renderCats();renderPosts()}
+function renderPosts(){
+ let arr=posts.filter(p=>selected==="All"||p.cat===selected);
+ if(document.getElementById("sort").value==="popular")arr.sort((a,b)=>b.likes-a.likes);
+ document.getElementById("posts").innerHTML=arr.length?arr.map(p=>`<article class="post"><div class="author">🌿 ${escapeHtml(p.name)} · ${p.time}</div><div style="display:flex;justify-content:space-between;gap:12px"><div><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.body)}</p></div><span style="font-size:12px;color:var(--sage);white-space:nowrap">${escapeHtml(p.cat)}</span></div><div class="actions"><button onclick="likePost(${p.id})">♡ ${p.likes}</button><span>💬 ${p.comments} responses</span><button onclick="alert('Report flow would open here in the next version.')">⚑ Report</button></div></article>`).join(""):"<p>No conversations in this category yet.</p>";
+}
+function likePost(id){const p=posts.find(x=>x.id===id);p.likes++;save();renderPosts()}
+function openComposer(cat){document.getElementById("modal").style.display="flex";document.getElementById("modalTitle").textContent=cat==="Prayer"?"Request prayer anonymously":"Share anonymously";document.getElementById("category").value=cat||selected==="All"?"Faith":selected}
+function closeComposer(){document.getElementById("modal").style.display="none"}
+function publish(){
+ const cat=document.getElementById("category").value,title=document.getElementById("postTitle").value.trim(),body=document.getElementById("postBody").value.trim();
+ if(!title||!body){alert("Please add a title and your thoughts.");return}
+ const name=names[Math.floor(Math.random()*names.length)]+" #"+Math.floor(1000+Math.random()*9000);
+ posts.unshift({id:Date.now(),name,cat,title,body,likes:0,comments:0,time:"just now"});save();closeComposer();document.getElementById("postTitle").value="";document.getElementById("postBody").value="";selected=cat;renderCats();renderPosts();location.hash="conversations";
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+document.getElementById("category").innerHTML=categories.map(c=>`<option>${c[1]}</option>`).join("");
+renderCats();renderPosts();
+</script>
+</body>
+</html>
